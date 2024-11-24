@@ -6,6 +6,15 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CustomCharacterMovementComponent.generated.h"
 
+UENUM(BlueprintType)
+namespace ECustomMovementMode
+{
+	enum Type
+	{
+		MOVE_Climb UMETA(DisplayName = "Climb Mode")
+	};
+}
+
 /**
  * 
  */
@@ -20,14 +29,16 @@ public :
 	private:
 
 	UFUNCTION()
-	TArray<FHitResult> DoCapsuleTraceMultiForObjects(const FVector& Start,const FVector& End,bool bShowDebugShape = false);
+	TArray<FHitResult> DoCapsuleTraceMultiForObjects(const FVector& Start,const FVector& End,bool bShowDebugShape = false,bool bDrawPersistantShapes = false);
 	UFUNCTION()
-	FHitResult DoLineTraceSingleForObject(const FVector& Start,const FVector& End,bool bShowDebugShape = false);
+	FHitResult DoLineTraceSingleForObject(const FVector& Start,const FVector& End,bool bShowDebugShape = false,bool bDrawPersistantShapes = false);
 	
 	UFUNCTION()
-	void TraceClimableSurfaces();
+	
+	bool TraceClimableSurfaces();
 	UFUNCTION()
-	void TraceFromEyeHeight(float TraceDistance,float TraceStartOffset = 0.f);
+	
+	FHitResult TraceFromEyeHeight(float TraceDistance,float TraceStartOffset = 0.f);
 	//Trace Variables
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Climbing, meta = (AllowPrivateAccess = "true"))
 	TArray<TEnumAsByte<EObjectTypeQuery>> ClimbableSurfaceTraceTypes;
@@ -37,5 +48,15 @@ public :
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Climbing, meta = (AllowPrivateAccess = "true"))
 	float ClimbCapsuleHalfHeight = 72.0f;
+
+	TArray<FHitResult> ClimbableSurfaceSTracedResults;
+public:
+	
+	UFUNCTION()
+	void ToogleClimbing(bool bEnableClimb);
+	UFUNCTION()
+	bool IsClimbing();
+	UFUNCTION()
+	bool CanStartClimbing();
 	
 };
