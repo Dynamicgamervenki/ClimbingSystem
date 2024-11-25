@@ -26,6 +26,7 @@ class CLIMBINGSYSTEM_API UCustomCharacterMovementComponent : public UCharacterMo
 protected: 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 	virtual void OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode);
+	virtual void PhysCustom(float deltaTime, int32 Iterations);
 	
 	private:
 
@@ -49,8 +50,14 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Climbing, meta = (AllowPrivateAccess = "true"))
 	float ClimbCapsuleHalfHeight = 72.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Climbing, meta = (AllowPrivateAccess = "true"))
+	float MaxBreakClimbDeceleration = 400.0f;
 
 	TArray<FHitResult> ClimbableSurfaceSTracedResults;
+
+	FVector CurrentClimbableSurfaceLocation;
+	FVector CurrentClimbableSurfaceNormal;
 public:
 	
 	UFUNCTION()
@@ -63,5 +70,9 @@ public:
 	void StartClimbing();
 	UFUNCTION()
 	void StopClimbing();
+	UFUNCTION()
+	void PhysClimb(float deltaTime, int32 Iterations);
+	UFUNCTION()
+	void ProcessClimbableSurfaceInfo();
 	
 };
