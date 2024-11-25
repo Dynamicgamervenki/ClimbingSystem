@@ -23,9 +23,10 @@ class CLIMBINGSYSTEM_API UCustomCharacterMovementComponent : public UCharacterMo
 {
 	GENERATED_BODY()
 
-public :
+protected: 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
-
+	virtual void OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode);
+	
 	private:
 
 	UFUNCTION()
@@ -58,5 +59,9 @@ public:
 	bool IsClimbing();
 	UFUNCTION()
 	bool CanStartClimbing();
+	UFUNCTION()
+	void StartClimbing();
+	UFUNCTION()
+	void StopClimbing();
 	
 };

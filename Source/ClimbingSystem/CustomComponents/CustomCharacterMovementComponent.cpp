@@ -2,8 +2,11 @@
 
 
 #include "CustomCharacterMovementComponent.h"
+
+#include "AI/NavigationSystemBase.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "ClimbingSystem/ClimbingSystemCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "ClimbingSystem/DebugHelpers.h"
 
 void UCustomCharacterMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType,
@@ -12,6 +15,26 @@ void UCustomCharacterMovementComponent::TickComponent(float DeltaTime, enum ELev
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	// TraceClimableSurfaces();
 	// TraceFromEyeHeight(100.0f);
+}
+
+void UCustomCharacterMovementComponent::OnMovementModeChanged(EMovementMode PreviousMovementMode,
+	uint8 PreviousCustomMode)
+{
+	if (IsClimbing())
+	{
+		bOrientRotationToMovement = false;
+		CharacterOwner->GetCapsuleComponent()->SetCapsuleHalfHeight(48.0f);
+	}
+
+	if (PreviousMovementMode == MOVE_Custom && PreviousCustomMode == ECustomMovementMode::MOVE_Climb)
+	{
+		bOrientRotationToMovement = true;
+		CharacterOwner->GetCapsuleComponent()->SetCapsuleHalfHeight(92.0f);
+		
+		StopMovementImmediately();
+	}
+	
+	Super::OnMovementModeChanged(PreviousMovementMode, PreviousCustomMode);
 }
 
 TArray<FHitResult> UCustomCharacterMovementComponent::DoCapsuleTraceMultiForObjects(const FVector& Start,
@@ -105,7 +128,7 @@ void UCustomCharacterMovementComponent::ToogleClimbing(bool bEnableClimb)
 		if (CanStartClimbing())
 		{
 			//start climbing
-			Debug::Print(TEXT("Can Climb"));
+			StartClimbing();
 		}
 		else
 		{
@@ -115,6 +138,7 @@ void UCustomCharacterMovementComponent::ToogleClimbing(bool bEnableClimb)
 	else
 	{
 		//stop climbing
+		StopClimbing();
 	}
 }
 
@@ -130,5 +154,15 @@ bool UCustomCharacterMovementComponent::CanStartClimbing()
 	if (!TraceFromEyeHeight(100.0f).bBlockingHit) return false;
 
 	return true;
+}
+
+void UCustomCharacterMovementComponent::StartClimbing()
+{
+	SetMovementMode(MOVE_Custom,ECustomMovementMode::MOVE_Climb);
+}
+
+void UCustomCharacterMovementComponent::StopClimbing()
+{
+	SetMovementMode(MOVE_Falling);
 }
 
