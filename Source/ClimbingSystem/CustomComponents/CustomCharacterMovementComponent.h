@@ -85,6 +85,8 @@ public:
 	UFUNCTION()
 	FQuat GetClimbRotation(float DeltaTime);
 	UFUNCTION()
+	bool CheckShouldStopClimbing();
+	UFUNCTION()
 	void SnapMovemnetToClimbableSurfaces(float DeltaTime);
 
 	//getters

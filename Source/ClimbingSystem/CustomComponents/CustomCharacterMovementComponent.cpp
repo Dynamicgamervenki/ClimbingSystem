@@ -185,6 +185,11 @@ void UCustomCharacterMovementComponent::PhysClimb(float deltaTime, int32 Iterati
 	/* Process All Climbable Surface Info */
 	TraceClimableSurfaces();
 	ProcessClimbableSurfaceInfo();
+
+	if (CheckShouldStopClimbing())
+	{
+		StopClimbing();
+	}
 	
 	/* Check If We Should Stop Clibing */
 	RestorePreAdditiveRootMotionVelocity();
@@ -267,6 +272,23 @@ void UCustomCharacterMovementComponent::SnapMovemnetToClimbableSurfaces(float De
 	const FVector SnapVector = -CurrentClimbableSurfaceNormal * ProjectedCharacterToSurface.Length();
 
 	UpdatedComponent->MoveComponent(SnapVector * DeltaTime * MaxClimbSpeed,UpdatedComponent->GetComponentQuat(),true);
+}
+
+bool UCustomCharacterMovementComponent::CheckShouldStopClimbing()
+{
+	if (ClimbableSurfaceSTracedResults.IsEmpty()) return true;
+
+	const float DotResult = FVector::DotProduct(CurrentClimbableSurfaceNormal,FVector::UpVector);
+	const float DegreeDiff = FMath::RadiansToDegrees(FMath::Acos(DotResult));
+
+	Debug::Print(TEXT("Degree Diff") + FString::SanitizeFloat(DegreeDiff),FColor::Black,2);
+
+	if (DegreeDiff <= 60.0f)
+	{
+		return true;
+	}
+	
+	return false;
 }
 
 float UCustomCharacterMovementComponent::GetMaxAcceleration() const
