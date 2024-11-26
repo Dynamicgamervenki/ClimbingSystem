@@ -151,7 +151,7 @@ void UCustomCharacterMovementComponent::ToogleClimbing(bool bEnableClimb)
 	}
 }
 
-bool UCustomCharacterMovementComponent::IsClimbing()
+bool UCustomCharacterMovementComponent::IsClimbing() const
 {
 	 return MovementMode == MOVE_Custom && CustomMovementMode == ECustomMovementMode::MOVE_Climb;
 }
@@ -205,7 +205,7 @@ void UCustomCharacterMovementComponent::PhysClimb(float deltaTime, int32 Iterati
 	FHitResult Hit(1.f);
 
 	//Handle Climb Rotation
-	SafeMoveUpdatedComponent(Adjusted, UpdatedComponent->GetComponentQuat(), true, Hit);
+	SafeMoveUpdatedComponent(Adjusted, GetClimbRotation(deltaTime), true, Hit);
 
 	if (Hit.Time < 1.f)
 	{
@@ -219,6 +219,7 @@ void UCustomCharacterMovementComponent::PhysClimb(float deltaTime, int32 Iterati
 	}
 
 	/* Snap Movement To Climbable Surfaces */
+	SnapMovemnetToClimbableSurfaces(deltaTime);
 }
 
 void UCustomCharacterMovementComponent::ProcessClimbableSurfaceInfo()
@@ -230,14 +231,65 @@ void UCustomCharacterMovementComponent::ProcessClimbableSurfaceInfo()
 
 	for (const FHitResult& TracedHitResult : ClimbableSurfaceSTracedResults)
 	{
-		CurrentClimbableSurfaceLocation = TracedHitResult.ImpactPoint;
-		CurrentClimbableSurfaceNormal = TracedHitResult.ImpactNormal;
+		CurrentClimbableSurfaceLocation += TracedHitResult.ImpactPoint;
+		CurrentClimbableSurfaceNormal += TracedHitResult.ImpactNormal;
 	}
 
 	CurrentClimbableSurfaceLocation /= ClimbableSurfaceSTracedResults.Num();
 	CurrentClimbableSurfaceNormal = CurrentClimbableSurfaceNormal.GetSafeNormal();
 
-	Debug::Print(TEXT("CurrentClimbableSurfaceLocation") + CurrentClimbableSurfaceLocation.ToCompactString(),FColor::Black,1);
-	Debug::Print(TEXT("CurrentClimbableSurfaceNormal") + CurrentClimbableSurfaceNormal.ToCompactString(),FColor::Black,2);
+	// Debug::Print(TEXT("ClimbableSurfaceLocation") + CurrentClimbableSurfaceLocation.ToCompactString(),FColor::Black,1);
+	// Debug::Print(TEXT("ClimbableSurfaceNormal") + CurrentClimbableSurfaceNormal.ToCompactString(),FColor::Black,2);
+}
+
+FQuat UCustomCharacterMovementComponent::GetClimbRotation(float DeltaTime)
+{
+	const FQuat CurrentQuat = UpdatedComponent->GetComponentQuat();
+
+	if (HasAnimRootMotion() || CurrentRootMotion.HasOverrideVelocity())
+	{
+		return CurrentQuat;
+	}
+
+	const FQuat TargetQuat = FRotationMatrix::MakeFromX(-CurrentClimbableSurfaceNormal).ToQuat();
+
+	return FMath::QInterpTo(CurrentQuat,TargetQuat,DeltaTime,5.0f);
+	
+}
+
+void UCustomCharacterMovementComponent::SnapMovemnetToClimbableSurfaces(float DeltaTime)
+{
+	const FVector ComponentLocation = UpdatedComponent->GetComponentLocation();
+	const FVector ComponentForward = UpdatedComponent->GetForwardVector();
+
+	const FVector ProjectedCharacterToSurface = (CurrentClimbableSurfaceLocation - ComponentLocation).ProjectOnTo(ComponentForward);
+
+	const FVector SnapVector = -CurrentClimbableSurfaceNormal * ProjectedCharacterToSurface.Length();
+
+	UpdatedComponent->MoveComponent(SnapVector * DeltaTime * MaxClimbSpeed,UpdatedComponent->GetComponentQuat(),true);
+}
+
+float UCustomCharacterMovementComponent::GetMaxAcceleration() const
+{
+	if (IsClimbing())
+	{
+		return 	MaxClimbAccelration;
+	}
+	else
+	{
+		return Super::GetMaxAcceleration();
+	}
+}
+
+float UCustomCharacterMovementComponent::GetMaxSpeed() const
+{
+	if (IsClimbing())
+	{
+		return MaxClimbSpeed;
+	}
+	else
+	{
+		return Super::GetMaxSpeed();
+	}
 }
 

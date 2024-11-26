@@ -25,8 +25,10 @@ class CLIMBINGSYSTEM_API UCustomCharacterMovementComponent : public UCharacterMo
 
 protected: 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
-	virtual void OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode);
-	virtual void PhysCustom(float deltaTime, int32 Iterations);
+	virtual void OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode) override;
+	virtual void PhysCustom(float deltaTime, int32 Iterations) override;
+	virtual float GetMaxAcceleration() const override;
+	virtual float GetMaxSpeed() const override;
 	
 	private:
 
@@ -53,6 +55,12 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Climbing, meta = (AllowPrivateAccess = "true"))
 	float MaxBreakClimbDeceleration = 400.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Climbing, meta = (AllowPrivateAccess = "true"))
+	float MaxClimbSpeed = 100.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Climbing, meta = (AllowPrivateAccess = "true"))
+	float MaxClimbAccelration = 300.0f;
 
 	TArray<FHitResult> ClimbableSurfaceSTracedResults;
 
@@ -63,7 +71,7 @@ public:
 	UFUNCTION()
 	void ToogleClimbing(bool bEnableClimb);
 	UFUNCTION()
-	bool IsClimbing();
+	bool IsClimbing() const;
 	UFUNCTION()
 	bool CanStartClimbing();
 	UFUNCTION()
@@ -74,5 +82,8 @@ public:
 	void PhysClimb(float deltaTime, int32 Iterations);
 	UFUNCTION()
 	void ProcessClimbableSurfaceInfo();
-	
+	UFUNCTION()
+	FQuat GetClimbRotation(float DeltaTime);
+	UFUNCTION()
+	void SnapMovemnetToClimbableSurfaces(float DeltaTime);
 };
