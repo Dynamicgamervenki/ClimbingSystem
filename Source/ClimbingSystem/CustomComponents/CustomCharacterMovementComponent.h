@@ -86,4 +86,7 @@ public:
 	FQuat GetClimbRotation(float DeltaTime);
 	UFUNCTION()
 	void SnapMovemnetToClimbableSurfaces(float DeltaTime);
+
+	//getters
+	FORCEINLINE FVector GetClimbableSurfaceNormal() const  {return  CurrentClimbableSurfaceNormal;}
 };

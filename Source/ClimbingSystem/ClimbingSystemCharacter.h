@@ -56,6 +56,9 @@ public:
 	
 
 	void Move(const FInputActionValue& Value);
+
+	void HandleGroundMovementInput(const FInputActionValue& Value);
+	void HandleClimbMovementInput(const FInputActionValue& Value);
 	
 	void Look(const FInputActionValue& Value);
 
