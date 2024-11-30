@@ -23,12 +23,14 @@ class CLIMBINGSYSTEM_API UCustomCharacterMovementComponent : public UCharacterMo
 {
 	GENERATED_BODY()
 
-protected: 
+protected:
+	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 	virtual void OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode) override;
 	virtual void PhysCustom(float deltaTime, int32 Iterations) override;
 	virtual float GetMaxAcceleration() const override;
 	virtual float GetMaxSpeed() const override;
+	virtual FVector ConstrainAnimRootMotionVelocity(const FVector& RootMotionVelocity, const FVector& CurrentVelocity) const override;
 	
 	private:
 
@@ -61,7 +63,16 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Climbing, meta = (AllowPrivateAccess = "true"))
 	float MaxClimbAccelration = 300.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Climbing, meta = (AllowPrivateAccess = "true"))
+	class UAnimMontage* IdleToClimbMontage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Climbing, meta = (AllowPrivateAccess = "true"))
+	class UAnimMontage* ClimbToTopMontage;
 
+	UPROPERTY()
+	class UAnimInstance* PlayerAnimInstance;
+	
 	TArray<FHitResult> ClimbableSurfaceSTracedResults;
 
 	FVector CurrentClimbableSurfaceLocation;
@@ -88,7 +99,24 @@ public:
 	bool CheckShouldStopClimbing();
 	UFUNCTION()
 	void SnapMovemnetToClimbableSurfaces(float DeltaTime);
+	UFUNCTION()
+	bool CheckHasReachedFloor();
+	UFUNCTION()
+	bool CheckHasReachedLedge();
+
+	UFUNCTION()
+	void PlayClimbMontage(UAnimMontage* MontageToPlay);
+
+	UFUNCTION()
+	void OnClimbMontageEnded(UAnimMontage* Montage, bool Interrupted);
+	
+	UFUNCTION()
+	FVector GetUnrotatedClimbVelocity();
+
+	
+	
 
 	//getters
 	FORCEINLINE FVector GetClimbableSurfaceNormal() const  {return  CurrentClimbableSurfaceNormal;}
 };
+
