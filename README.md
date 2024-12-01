@@ -10,10 +10,15 @@ This repository contains a **Third-Person Wall Climbing System** developed in **
   https://github.com/user-attachments/assets/b9ea249c-5530-4338-8d0d-32ed212c7ff4
 
 - **Automatic Top Transition**:  
-  The system smoothly transitions the player to the top of a wall upon reaching the edge.  
+  The system smoothly transitions the player to the top of a wall upon reaching the edge.
+
+    https://github.com/user-attachments/assets/9fe25415-145b-4895-8d03-256f6ce6ba8f
 
 - **Climbing Down**:  
-  Allows players to climb down ledges with smooth animations and controls.  
+  Allows players to climb down ledges with smooth animations and controls.
+
+  
+https://github.com/user-attachments/assets/3b3380bb-d85e-43c5-a9e6-eeeec4adf541
 
 - **Fully C++**:  
   The entire system is implemented using Unreal Engine's C++ API for optimal performance and flexibility.  
