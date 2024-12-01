@@ -26,6 +26,32 @@ This repository contains a **Third-Person Wall Climbing System** developed in **
 1. Clone this repository:  
    ```bash  
    git clone https://github.com/Dynamicgamervenki/ClimbingSystem.git  
-2.Open the .uproject file in Unreal Engine 5.
-3.Build the project using your preferred IDE (Visual Studio or Rider).
-4.Launch the project to test the climbing system.
+Navigate to the project directory:
+
+bash
+Copy code
+cd ClimbingSystem  
+Generate project files:
+
+If you're using Windows, right-click the .uproject file and select "Generate Visual Studio project files".
+Alternatively, you can use the command line:
+bash
+Copy code
+UnrealBuildTool.exe -projectfiles -project="ClimbingSystem.uproject" -game -engine  
+Open the generated solution file (.sln) in your preferred IDE (e.g., Visual Studio or Rider).
+
+Build the project in Development Editor mode to generate binaries:
+
+In Visual Studio:
+Set the build configuration to Development Editor.
+Select your platform (e.g., Win64).
+Click Build.
+Launch Unreal Engine 5:
+
+Double-click the .uproject file to open the project in the Unreal Editor.
+Wait for DerivedDataCache (DDC) files to generate:
+
+This process may take some time depending on your system and the assets in the project.
+Test the climbing system:
+
+Press Play in the Unreal Editor to experience the climbing system!
