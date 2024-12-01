@@ -68,7 +68,16 @@ protected:
 	class UAnimMontage* IdleToClimbMontage;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Climbing, meta = (AllowPrivateAccess = "true"))
-	class UAnimMontage* ClimbToTopMontage;
+	UAnimMontage* ClimbToTopMontage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Climbing, meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* ClimbDownLedgeMontage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Climbing, meta = (AllowPrivateAccess = "true"))
+	float ClimbDownWalkableSurfaceTraceOffset = 100.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Climbing, meta = (AllowPrivateAccess = "true"))
+	float ClimbDownLedgeTraceOffset = 50.0f;
 
 	UPROPERTY()
 	class UAnimInstance* PlayerAnimInstance;
@@ -103,6 +112,8 @@ public:
 	bool CheckHasReachedFloor();
 	UFUNCTION()
 	bool CheckHasReachedLedge();
+	UFUNCTION()
+	bool CanClimbDownLedge();
 
 	UFUNCTION()
 	void PlayClimbMontage(UAnimMontage* MontageToPlay);

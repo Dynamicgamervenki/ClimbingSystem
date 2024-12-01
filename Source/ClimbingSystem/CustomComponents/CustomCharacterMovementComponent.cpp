@@ -2,8 +2,6 @@
 
 
 #include "CustomCharacterMovementComponent.h"
-
-#include "AI/NavigationSystemBase.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "ClimbingSystem/ClimbingSystemCharacter.h"
 #include "Components/CapsuleComponent.h"
@@ -25,8 +23,6 @@ void UCustomCharacterMovementComponent::TickComponent(float DeltaTime, enum ELev
                                                       FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	// TraceClimableSurfaces();
-	// TraceFromEyeHeight(100.0f);
 }
 
 void UCustomCharacterMovementComponent::OnMovementModeChanged(EMovementMode PreviousMovementMode,
@@ -151,9 +147,13 @@ void UCustomCharacterMovementComponent::ToogleClimbing(bool bEnableClimb)
 			//start climbing
 			PlayClimbMontage(IdleToClimbMontage);
 		}
+		else if (CanClimbDownLedge())
+		{
+			PlayClimbMontage(ClimbDownLedgeMontage);
+		}
 		else
 		{
-			Debug::Print(TEXT("Can Not Climb"));
+			Debug::Print(TEXT("Can Not ClimbDown Ledge"),FColor::Red,4);
 		}
 	}
 	else
@@ -347,6 +347,32 @@ bool UCustomCharacterMovementComponent::CheckHasReachedLedge()
 	return false;	
 }
 
+bool UCustomCharacterMovementComponent::CanClimbDownLedge()
+{
+	if (IsClimbing()) return false;
+	
+	const FVector ComponentLocation = UpdatedComponent->GetComponentLocation();
+	const FVector ComponentForward = UpdatedComponent->GetForwardVector();
+	const FVector DownVector = -UpdatedComponent->GetUpVector();
+
+	const FVector WalkableSurfaceTraceStart = ComponentLocation + ComponentForward * ClimbDownWalkableSurfaceTraceOffset;
+	const FVector WalkableSurfaceTraceEnd = WalkableSurfaceTraceStart + DownVector * 100.0f;
+
+	FHitResult WalkableSurfaceHit = DoLineTraceSingleForObject(WalkableSurfaceTraceStart,WalkableSurfaceTraceEnd,true);
+
+	const FVector LedgeTraceStart = WalkableSurfaceHit.TraceStart + ComponentForward * ClimbDownLedgeTraceOffset;
+	const FVector LedgeTraceEnd = LedgeTraceStart + DownVector * 250.0f;
+
+	FHitResult LedgeTraceHit = DoLineTraceSingleForObject(LedgeTraceStart,LedgeTraceEnd,true);
+
+	if (WalkableSurfaceHit.bBlockingHit && !LedgeTraceHit.bBlockingHit)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 bool UCustomCharacterMovementComponent::CheckShouldStopClimbing()
 {
 	if (ClimbableSurfaceSTracedResults.IsEmpty()) return true;
@@ -404,11 +430,12 @@ FVector UCustomCharacterMovementComponent::ConstrainAnimRootMotionVelocity(const
 
 void UCustomCharacterMovementComponent::OnClimbMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	if (Montage == IdleToClimbMontage)
+	if (Montage == IdleToClimbMontage || Montage == ClimbDownLedgeMontage)
 	{
 		StartClimbing();
+		StopMovementImmediately();
 	}
-	else
+	if (Montage == ClimbToTopMontage)
 	{
 		SetMovementMode(MOVE_Walking);
 	}
