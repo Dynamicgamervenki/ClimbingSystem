@@ -5,7 +5,9 @@ This repository contains a **Third-Person Wall Climbing System** developed in **
 ## Features  
 
 - **Wall Climbing**:  
-  The player can climb walls by interacting with climbable surfaces.  
+  The player can climb walls by interacting with climbable surfaces.
+
+  https://github.com/user-attachments/assets/b9ea249c-5530-4338-8d0d-32ed212c7ff4
 
 - **Automatic Top Transition**:  
   The system smoothly transitions the player to the top of a wall upon reaching the edge.  
