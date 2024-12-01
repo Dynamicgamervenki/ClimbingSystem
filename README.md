@@ -25,33 +25,34 @@ This repository contains a **Third-Person Wall Climbing System** developed in **
 ### Installation  
 1. Clone this repository:  
    ```bash  
-   git clone https://github.com/Dynamicgamervenki/ClimbingSystem.git  
-Navigate to the project directory:
+   git clone https://github.com/Dynamicgamervenki/ClimbingSystem.git
+   
+2. **Navigate to the project directory**:  
+   ```bash  
+   cd ClimbingSystem  
+   ```  
 
-bash
-Copy code
-cd ClimbingSystem  
-Generate project files:
+3. **Generate project files**:  
+   - If you're using Windows, right-click the `.uproject` file and select **"Generate Visual Studio project files"**.  
+   - Alternatively, you can use the command line:  
+     ```bash  
+     UnrealBuildTool.exe -projectfiles -project="ClimbingSystem.uproject" -game -engine  
+     ```  
 
-If you're using Windows, right-click the .uproject file and select "Generate Visual Studio project files".
-Alternatively, you can use the command line:
-bash
-Copy code
-UnrealBuildTool.exe -projectfiles -project="ClimbingSystem.uproject" -game -engine  
-Open the generated solution file (.sln) in your preferred IDE (e.g., Visual Studio or Rider).
+4. **Open the generated solution file (`.sln`)** in your preferred IDE (e.g., Visual Studio or Rider).  
 
-Build the project in Development Editor mode to generate binaries:
+5. **Build the project in Development Editor mode** to generate binaries:  
+   - In Visual Studio:  
+     - Set the build configuration to **Development Editor**.  
+     - Select your platform (e.g., Win64).  
+     - Click **Build**.  
 
-In Visual Studio:
-Set the build configuration to Development Editor.
-Select your platform (e.g., Win64).
-Click Build.
-Launch Unreal Engine 5:
+6. **Launch Unreal Engine 5**:  
+   - Double-click the `.uproject` file to open the project in the Unreal Editor.  
 
-Double-click the .uproject file to open the project in the Unreal Editor.
-Wait for DerivedDataCache (DDC) files to generate:
+7. **Wait for DerivedDataCache (DDC) files to generate**:  
+   - This process may take some time depending on your system and the assets in the project.  
 
-This process may take some time depending on your system and the assets in the project.
-Test the climbing system:
+8. **Test the climbing system**:  
+   - Press **Play** in the Unreal Editor to experience the climbing system!  
 
-Press Play in the Unreal Editor to experience the climbing system!
